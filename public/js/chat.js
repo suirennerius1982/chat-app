@@ -9,6 +9,7 @@ const $messages = document.querySelector('#messages')
 
 //templates
 const messageTemplate = document.querySelector('#message-template').innerHTML
+const locationTemplate = document.querySelector('#location-template').innerHTML
 
 socket.on('message', (message) => {
     console.log(message)
@@ -17,6 +18,13 @@ socket.on('message', (message) => {
     })
     $messages.insertAdjacentHTML('beforeend', html)
 })
+
+ socket.on('locationMessage', (url) => {
+    const html = Mustache.render(locationTemplate, {
+        url
+    })
+    $messages.insertAdjacentHTML('beforeend', html)
+}) 
 
 $formMessage.addEventListener('submit', (e) => {
     e.preventDefault()
@@ -45,9 +53,9 @@ $buttonGeo.addEventListener('click', () => {
         socket.emit('sendLocation', {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude
-        }, (message) => {
+        }, (url) => {
             $buttonGeo.removeAttribute('disabled')
-            console.log(`Location shared ${message}`)
+            console.log(`Location shared ${url}`)
         })
     })
 })
