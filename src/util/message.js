@@ -1,10 +1,18 @@
-const getMessage = (message) => {
+const generateMessage = (message) => {
     return {
-        message: message,
+        message,
+        createAt: new Date().getTime()
+    }
+}
+
+const generateLocationMessage = (url) => {
+    return {
+        url,
         createAt: new Date().getTime()
     }
 }
 
 module.exports = {
-    getMessage
+    generateMessage,
+    generateLocationMessage
 }
