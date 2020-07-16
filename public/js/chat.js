@@ -7,14 +7,15 @@ const $inputMessage = $formMessage.querySelector('#message')
 const $buttonGeo = document.querySelector('#buttonGeo')
 const $messages = document.querySelector('#messages')
 
-//templates
+//templates 
 const messageTemplate = document.querySelector('#message-template').innerHTML
 const locationTemplate = document.querySelector('#location-template').innerHTML
 
 socket.on('message', (message) => {
     console.log(message)
     const html = Mustache.render(messageTemplate, {
-        message
+        message: message.message,
+        createAt: moment(message.createAt).format("hh:mm:a")
     })
     $messages.insertAdjacentHTML('beforeend', html)
 })
