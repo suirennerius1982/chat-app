@@ -14,7 +14,7 @@ const port = process.env.PORT || 3000
 
 const publicDirectoryPath = path.join(__dirname, '../public')
 app.use(express.static(publicDirectoryPath))
-
+  
 io.on('connection', (socket) => {
 
     socket.on('join', (options, callback) => {
@@ -26,8 +26,8 @@ io.on('connection', (socket) => {
 
 
         socket.join(user.room)
-        socket.emit('message', generateMessage('Welcome!!!'))
-        socket.broadcast.to(user.room).emit('message', generateMessage(`${user.username} has joined!`))
+        socket.emit('message', generateMessage('System Admin', 'Welcome!!!'))
+        socket.broadcast.to(user.room).emit('message', generateMessage('System Admin', `${user.username} has joined!`))
         callback()
 
         //socket.emit, io.emit (particular user), socket.broadcast.emit
@@ -39,13 +39,15 @@ io.on('connection', (socket) => {
         if (filter.isProfane(message)) {
             return callback(generateMessage('Profany is not allowed!'))
         }
-        io.emit('message', generateMessage(message))
+        const user = getUser(socket.id)
+        io.to(user.room).emit('message', generateMessage(user.username, message))
         //calback('Delivered confirmation server')
         callback()
     })
-
+ 
     socket.on('sendLocation', (coords, callback) => {
-        io.emit('locationMessage', generateLocationMessage(`https://google.com/maps?q=${coords.latitude},${coords.longitude}`))
+        const user = getUser(socket.id)
+        io.to(user.room).emit('locationMessage', generateLocationMessage(user.username, `https://google.com/maps?q=${coords.latitude},${coords.longitude}`))
         callback('The server shared the location to other users!')
     })
 
@@ -53,7 +55,7 @@ io.on('connection', (socket) => {
         const user = removeUser(socket.id)
 
         if (user) {
-            io.to(user.room).emit('message', generateMessage(`${user.username} has left!`)) 
+            io.to(user.room).emit('message', generateMessage('System Admin', `${user.username} has left!`)) 
         }
     })
 })

@@ -13,20 +13,22 @@ const locationTemplate = document.querySelector('#location-message-template').in
 
 //Options
 const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
-
+ 
 socket.on('message', (message) => {
     console.log(message)
     const html = Mustache.render(messageTemplate, {
         message: message.message,
-        createAt: moment(message.createAt).format('hh:mm:a')
+        createAt: moment(message.createAt).format('hh:mm:a'),
+        username: message.username
     })
     $messages.insertAdjacentHTML('beforeend', html)
 })
-
+ 
 socket.on('locationMessage', (message) => {
     const html = Mustache.render(locationTemplate, {
         url: message.url,
-        createAt: moment(message.createAt).format('hh:mm:a')
+        createAt: moment(message.createAt).format('hh:mm:a'),
+        username: message.username
     })
     $messages.insertAdjacentHTML('beforeend', html)
 })
