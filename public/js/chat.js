@@ -10,12 +10,11 @@ const $messages = document.querySelector('#messages')
 //templates 
 const messageTemplate = document.querySelector('#message-template').innerHTML
 const locationTemplate = document.querySelector('#location-message-template').innerHTML
-
+const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML
 //Options
 const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
  
 socket.on('message', (message) => {
-    console.log(message)
     const html = Mustache.render(messageTemplate, {
         message: message.message,
         createAt: moment(message.createAt).format('hh:mm:a'),
@@ -32,7 +31,16 @@ socket.on('locationMessage', (message) => {
     })
     $messages.insertAdjacentHTML('beforeend', html)
 })
-
+ 
+socket.on('roomData', ({room, users}) => {
+    const html = Mustache.render(sidebarTemplate, {
+        room,
+        users
+    })
+    console.log(html) 
+    document.querySelector("#sidebar").innerHTML = html
+})
+  
 $formMessage.addEventListener('submit', (e) => {
     e.preventDefault()
     $buttonSendMessage.setAttribute('disabled', 'disabled')

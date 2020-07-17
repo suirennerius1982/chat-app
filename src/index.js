@@ -14,9 +14,9 @@ const port = process.env.PORT || 3000
 
 const publicDirectoryPath = path.join(__dirname, '../public')
 app.use(express.static(publicDirectoryPath))
-  
+    
 io.on('connection', (socket) => {
-
+ 
     socket.on('join', (options, callback) => {
         const { user, error } = addUser({id: socket.id, ...options})
 
@@ -24,10 +24,15 @@ io.on('connection', (socket) => {
             return callback(error)
         }
 
-
+ 
         socket.join(user.room)
         socket.emit('message', generateMessage('System Admin', 'Welcome!!!'))
         socket.broadcast.to(user.room).emit('message', generateMessage('System Admin', `${user.username} has joined!`))
+        io.to(user.room).emit('roomData', {
+            room: user.room, 
+            users: getUsersInRoom(user.room)
+        })
+
         callback()
 
         //socket.emit, io.emit (particular user), socket.broadcast.emit
@@ -56,6 +61,10 @@ io.on('connection', (socket) => {
 
         if (user) {
             io.to(user.room).emit('message', generateMessage('System Admin', `${user.username} has left!`)) 
+            io.to(user.room).emit('roomData', {
+                room: user.room,
+                users: getUsersInRoom(user.room)
+            })
         }
     })
 })
