@@ -4,6 +4,7 @@ const users = []
 
 const addUser = ({ id, username, room }) => {
     //Clean the data
+    console.log(users)
     username = username.trim().toLowerCase()
     room = room.trim().toLowerCase()
 
@@ -29,14 +30,20 @@ const addUser = ({ id, username, room }) => {
     //Store user
     const user = { id, username, room }
     users.push(user)
+    console.log(users) 
     return { user }
 }
 
 const removeUser = (id) => {
+    console.log(users)
     const index = users.findIndex((user) => user.id === id)
-
+    console.log(index) 
     if(index !== -1) {
-        return users.splice(index, 1)[0]
+        console.log(users)
+        const userDeleted = users.splice(index, 1)
+        console.log(userDeleted)
+        console.log(users) 
+        return userDeleted[0] 
     }
 }
 
